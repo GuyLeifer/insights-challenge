@@ -1,13 +1,16 @@
 const express = require('express')
 const router = express.Router();
 const mongoose = require('mongoose');
+const Post = require('../models/mongoSchema');
 
 mongoose.connect(process.env.MONGODB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 }).catch(err => console.log(err.reason));
 
-const Post = require('../models/mongoSchema');
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 
 router.post('/', (req, res) => {
     try {
@@ -24,6 +27,15 @@ router.post('/', (req, res) => {
         res.status(201).send(post)
     } catch (err) {
         console.log(err.massage)
+    }
+})
+
+router.get('/', async (req, res) => {
+    try {
+        const posts = await Post.find();
+        res.send(posts)
+    } catch (err) {
+        res.send(err)
     }
 })
 
