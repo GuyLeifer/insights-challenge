@@ -1,8 +1,8 @@
 const puppeteer = require('puppeteer');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-const data = [];
-
-setInterval(function() {
+// setInterval(function() {
     (async () => {
         const browser = await puppeteer.launch({
             args: ['--proxy-server=socks5://127.0.0.1:9050'], //dark web
@@ -14,6 +14,9 @@ setInterval(function() {
 
         const posts = await page.$$('.col-sm-12');
         posts.forEach( async (post) => {
+
+            const href = await post.$eval('.btn', (el) => el.getAttribute('href'));
+            const id = href.replace('http://nzxj65x32vh2fkhk.onion/', "");
             const title = await post.$('h4');
             const titleContent = await (await title.getProperty('innerText')).jsonValue();
 
@@ -23,10 +26,12 @@ setInterval(function() {
             const footer = await post.$('div[class="col-sm-6"]');
             const footerContent = await (await footer.getProperty('innerText')).jsonValue();
             let [author, date] = footerContent.split(' at ');
+            date = new Date(date);
             author = author.slice(10);
-            console.log(titleContent, textContent, author, date)
+
         })
-    })()}, 2 * 60 * 1000);
+    })()
+// }, 2 * 60 * 1000);
 
 
 
