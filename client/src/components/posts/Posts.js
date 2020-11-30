@@ -2,12 +2,15 @@ import React, {useEffect, useState} from 'react';
 import './Posts.css'
 import axios from 'axios';
 
-import Post from './Post';
+import Post from './components/Post';
+import Counter from './components/Counter';
 
 function Posts() {
 
     const [posts, setPosts] = useState();
     const [counter, setCounter] = useState();
+    const [initialCounter, setInitialCounter] = useState();
+    const [restore, setRestore] = useState(1);
 
     useEffect(() => {
         (async () => {
@@ -15,18 +18,25 @@ function Posts() {
         console.log(data)
         setPosts(data)
         setCounter(data.length)
+        setInitialCounter(data.length)
         })()
     }, [])
 
+    const increaseCounter = () => {
+        setCounter(prev => prev - 1)
+    }
 
+     //restore 
+    const restorePosts = () => {
+        setCounter(0);
+        setRestore(restore => restore * -1);
+        setCounter(initialCounter);
+    }
+        
     return (
         <div>
-            {counter && (
-                counter > 1 ? <div className="counter">Showing {counter} Posts</div>
-                : counter === 1 ? <div className="counter">Showing {counter} Post</div>
-                : <div className="counter">No Posts Available</div>
-            )}
-            {posts ? posts.map(post => <Post post={post} />) : null}
+            {counter >= 0 ? <Counter counter={counter} restore={restorePosts} initialCounter={initialCounter}/> : null}
+            {posts ? posts.map(post => <Post post={post} increaseCounter={increaseCounter} restore={restore} />) : null}
         </div>
     )
 }
