@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Gloria+Hallelujah&family=Gochi+Hand&family=Permanent+Marker&display=swap');
 .App {
   text-align: center;
+  font-family: 'Bebas Neue', cursive;
 }

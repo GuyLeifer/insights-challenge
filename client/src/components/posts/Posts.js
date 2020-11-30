@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import './Posts.css'
+import './Posts.css';
 import axios from 'axios';
 
 import Post from './components/Post';
@@ -34,7 +34,8 @@ function Posts() {
     }
         
     return (
-        <div>
+        <div className="postsRoute">
+            <h2 className="postsH2">Dark - Web Posts</h2>
             {counter >= 0 ? <Counter counter={counter} restore={restorePosts} initialCounter={initialCounter}/> : null}
             {posts ? posts.map(post => <Post post={post} increaseCounter={increaseCounter} restore={restore} />) : null}
         </div>

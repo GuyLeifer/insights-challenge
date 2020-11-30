@@ -12,7 +12,10 @@ function Counter({ counter, restore, initialCounter }) {
                 : null
             }
             {initialCounter > counter &&
-                <button id="restoreHidePosts" onClick={restore}>restore</button>
+                <div id="restoreHidePosts" onClick={restore}>Restore All</div>
+            }
+            {initialCounter > counter &&
+                <div className="counterSentence">Hiding {initialCounter - counter} Posts</div>
             }
         </div>
     )

@@ -4,21 +4,21 @@
     background-color: lightslategray;
     padding:0px 10px;
     border-radius: 5px;
+    font-size: 180%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
-.counter button{
+.counterSentence {
+    color: rgb(49, 47, 43);
+    font-weight: bold;
+    width: 33%;
+}
+#restoreHidePosts{
     background:none;
     border: none;
     text-decoration: underline;
     color: white;
-    font-weight: bold;
     cursor: pointer;
-}
-.counterSentence {
-    display: inline;
-    position: relative;
-    right: 0;
-    width: 300px;
-    margin: auto;
-    color: rgb(49, 47, 43);
-    font-weight: bold;
+    font-size: 70%;
 }

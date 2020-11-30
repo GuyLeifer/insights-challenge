@@ -1,8 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Gloria+Hallelujah&family=Gochi+Hand&family=Permanent+Marker&display=swap');
-
 .about {
     margin: auto;
-    font-family: 'Bebas Neue', cursive;
     font-size: 120%;
     max-width: 60%;
 }
