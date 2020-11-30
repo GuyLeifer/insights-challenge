@@ -7,7 +7,7 @@ function scrape ()  {
         try {
             const browser = await puppeteer.launch({
                 args: ['--proxy-server=socks5://127.0.0.1:9050'], //dark web
-                headless: false
+                // headless: false
             })
             const page = await browser.newPage();
             await page.goto('http://nzxj65x32vh2fkhk.onion/all'); //dark web
