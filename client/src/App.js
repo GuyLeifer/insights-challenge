@@ -3,14 +3,24 @@ import './App.css';
 //components
 import Header from './components/header/Header';
 import Navbar from './components/navbar/Navbar';
-import Posts from './components/posts/Posts'
+import Posts from './components/posts/Posts';
+import About from './components/about/About';
+import Footer from './components/footer/Footer';
+
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
+      <Router>
       <Navbar />
       <Header />
-      <Posts />
+        <Switch>
+          <Route path="/posts" component={Posts} />
+          <Route path="/about" component={About} />
+        </Switch>
+      </Router>
+      <Footer />
     </div>
   );
 }
