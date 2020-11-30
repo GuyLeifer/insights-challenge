@@ -1,0 +1,27 @@
+h2 {
+    padding:0;
+    color: lightslategray;
+    text-align: center;
+}
+.post {
+    margin: 40px auto;
+    max-width: 800px;
+    padding:10px;
+    box-shadow: 0px 0px 10px;
+    position: relative;
+    background-color: white;
+}
+.footer {
+    margin: 10px 0; 
+    padding: 3px;
+    background-color: black;
+}
+.info {
+    height: fit-content;
+    color: lightslategray;
+    display: flex;
+    justify-content: space-between;
+}
+.info div {
+    margin: auto 1%;
+}
