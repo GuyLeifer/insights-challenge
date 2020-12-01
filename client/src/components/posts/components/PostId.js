@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './PostId.css';
 
 import axios from 'axios';
+import GenericNotFound from '../../../components/genericNotFound/GenericNotFound'
 
 function PostId({ match}) {
     const [post, setPost] = useState();
@@ -29,7 +30,7 @@ function PostId({ match}) {
                     </div>
                 </div>
             </div>
-            : null
+            : <GenericNotFound />
         }
         </>
     )
