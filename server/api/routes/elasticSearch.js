@@ -161,20 +161,11 @@ router.get("/all", async (req, res) => {
                     }
                 }
             })
-    
-            const postsSearchDateResults = await client.search({ 
-                index: 'posts',
-                size: 3,
-                body: { 
-                    query: {
-                        prefix: {               
-                            date: name
-                        }
-                    }
-                }
-            })
             
-            res.send([postsSearchTitleResults.body.hits.hits, postsSearchContentResults.body.hits.hits, postsSearchAuthorResults.body.hits.hits, postsSearchDateResults.body.hits.hits])
+            res.send([postsSearchTitleResults.body.hits.hits.map(hit => hit._source), 
+                postsSearchContentResults.body.hits.hits.map(hit => hit._source), 
+                postsSearchAuthorResults.body.hits.hits.map(hit => hit._source)
+            ])
         } catch (e) {
             res.send(e.message);
         }

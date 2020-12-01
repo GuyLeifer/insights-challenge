@@ -12,7 +12,6 @@ function PostId({ match}) {
         (async () => {
             const { data } = await axios.get(`/elasticsearch/id/${id}`);
             setPost(data[0])
-            console.log(data[0])
         })()
     }, [])
     
