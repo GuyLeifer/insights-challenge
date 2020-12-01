@@ -20,16 +20,18 @@ function scrape ()  {
                 const id = href.replace('http://nzxj65x32vh2fkhk.onion/', "");
                 const title = await post.$('h4');
                 const titleContent = await (await title.getProperty('innerText')).jsonValue();
-    
+                if(titleContent === "") titleContent = "No Title"; // unified title
+
                 const text = await post.$('div[class="text"]');
                 let textContent = await (await text.getProperty('innerText')).jsonValue();
-                textContent = textContent.replace(/\s\s+/g, ' ');
+                textContent = textContent.replace(/\s\s+/g, ' '); // no extra spaces
 
                 const footer = await post.$('div[class="col-sm-6"]');
                 const footerContent = await (await footer.getProperty('innerText')).jsonValue();
                 let [author, date] = footerContent.split(' at ');
-                date = new Date(date);
+                date = new Date(date); // UTC date
                 author = author.slice(10);
+                if(author.toLowerCase() === "guest" || author.toLowerCase() === "unknown") author = "Anonymous"; // unified author
 
                 axios.post('http://localhost:3001/posts', {
                     id: id,
