@@ -1,6 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import './Post.css';
 
+import { Link } from "react-router-dom";
+
 function Post({ post, increaseCounter, restore }) {
     
     const [klass, setKlass] = useState('post');
@@ -19,7 +21,9 @@ function Post({ post, increaseCounter, restore }) {
     return (
         <div className={klass}>
             <button className="hideTicketButton" onClick={isHide}>Hide</button>
-            <h2>{post.title}</h2>
+            <Link to={`/posts/${post._id}`} post={post}>
+                <h2>{post.title}</h2>
+            </Link>
             <div className="content">{post.content}</div>
             <div className="footer">
                 <div className="info">

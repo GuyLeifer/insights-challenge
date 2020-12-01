@@ -3,9 +3,11 @@ import './App.css';
 //components
 import Header from './components/header/Header';
 import Navbar from './components/navbar/Navbar';
-import Posts from './components/posts/Posts';
 import About from './components/about/About';
 import Footer from './components/footer/Footer';
+
+import Posts from './components/posts/Posts';
+import PostId from './components/posts/components/PostId';
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -16,7 +18,8 @@ function App() {
       <Navbar />
       <Header />
         <Switch>
-          <Route path="/posts" component={Posts} />
+          <Route exact path="/posts" component={Posts} />
+          <Route path="/posts/:id" component={PostId} />
           <Route path="/about" component={About} />
         </Switch>
       </Router>

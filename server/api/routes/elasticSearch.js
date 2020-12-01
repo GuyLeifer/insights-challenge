@@ -181,4 +181,27 @@ router.get("/all", async (req, res) => {
     };
 });
 
+router.get("/id/:id", async (req, res) => {
+    const { id } = req.params;
+    if (id === "") res.send([])
+    else {
+        try {
+            const postSearchIdResult = await client.search({ 
+                index: 'posts',
+                size: 1,
+                body: { 
+                    query: {
+                        prefix: {
+                            id: id
+                        }
+                    }
+                }
+            })        
+            res.send([postSearchIdResult.body.hits.hits[0]._source])
+        } catch (e) {
+            res.send(e.message);
+        }
+    };
+});
+
 module.exports = router;

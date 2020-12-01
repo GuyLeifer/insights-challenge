@@ -15,10 +15,9 @@ function Posts() {
     useEffect(() => {
         (async () => {
             const { data } = await axios.get('/posts');
-        console.log(data)
-        setPosts(data)
-        setCounter(data.length)
-        setInitialCounter(data.length)
+            setPosts(data)
+            setCounter(data.length)
+            setInitialCounter(data.length)
         })()
     }, [])
 
@@ -37,7 +36,7 @@ function Posts() {
         <div className="postsRoute">
             <h2 className="postsH2">Dark - Web Posts</h2>
             {counter >= 0 ? <Counter counter={counter} restore={restorePosts} initialCounter={initialCounter}/> : null}
-            {posts ? posts.map(post => <Post post={post} increaseCounter={increaseCounter} restore={restore} />) : null}
+            {posts ? posts.map(post => <Post key={post.id} post={post} increaseCounter={increaseCounter} restore={restore} />) : null}
         </div>
     )
 }
