@@ -16,7 +16,7 @@ function scrape ()  {
             const posts = await page.$$('.col-sm-12');
             posts.forEach( async (post) => {
     
-                const href = await post.$eval('.btn-success', (el) => el.getAttribute('href'));
+                const href = await post.$eval('.btn', (el) => el.getAttribute('href'));
                 const id = href.replace('http://nzxj65x32vh2fkhk.onion/', "");
                 const title = await post.$('h4');
                 const titleContent = await (await title.getProperty('innerText')).jsonValue();
@@ -31,18 +31,26 @@ function scrape ()  {
                 date = new Date(date);
                 author = author.slice(10);
 
-                    axios.post('http://localhost:3001/posts', {
+                axios.post('http://localhost:3001/posts', {
+                    id: id,
+                    title: titleContent,
+                    content: textContent,
+                    author: author,
+                    date: date
+                }).then(res => {
+                    axios.post('http://localhost:3001/elasticsearch/posts', {
                         id: id,
                         title: titleContent,
                         content: textContent,
                         author: author,
                         date: date
                     }).then(res => {
-                        console.log(`success`)
-                    }).catch(error => {
-                        console.error(error)
-                    })
-                // console.log(id, titleContent, textContent, author, date)
+                        console.log(res)
+                    }).catch(err => console.log("elasticsearch error", err.massage))
+                }).catch(error => {
+                    console.error(error)
+                })
+
                 await browser.close();
             })
         } catch (err) {

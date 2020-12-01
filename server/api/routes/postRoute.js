@@ -1,5 +1,9 @@
 const express = require('express')
 const router = express.Router();
+
+const Sentiment = require('sentiment');
+const sentiment = new Sentiment();
+
 const mongoose = require('mongoose');
 const Post = require('../models/mongoSchema');
 
@@ -37,6 +41,11 @@ router.get('/', async (req, res) => {
     } catch (err) {
         res.send(err)
     }
+})
+
+router.get('/analysis', (req, res) => {
+    var result = sentiment.analyze('weapon');
+    console.dir(result);
 })
 
 module.exports = router;
