@@ -1,0 +1,71 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  tor-proxy:
+    image: dperson/torproxy
+    ports:
+      - '9050:9050'
+      
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300 
+    environment:
+      ES_JAVA_OPTS: '-Xms512m -Xmx512m'
+      network.bind_host: 0.0.0.0
+      network.host: 0.0.0.0
+      discovery.type: single-node
+    networks:
+      - elastic
+    
+  
+  puppeteer:
+    image: buildkite/puppeteer:5.2.1
+    container_name: puppeteer
+
+
+## server image
+  api-insights-project:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    stdin_open: true
+    volumes:
+      - '/usr/app/server/node_modules'
+      - ./server:/usr/app/server
+    ports:
+      - '3001:3001'
+    environment:
+      MONGODB: mongodb+srv://guyleifer:Guyleifer7@cyber4s.k6ybr.mongodb.net/insights?retryWrites=true&w=majority
+      PORT: 3001
+    depends_on:
+      - elasticsearch
+      - puppeteer
+      - tor-proxy 
+
+
+## client image
+  app-insights-project:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    stdin_open: true
+    volumes:
+      - '/usr/app/client/node_modules'
+      - ./client:/usr/app/client
+    ports:
+      - '3030:3000'
+    depends_on:
+      - api-insights-project ## server image
+
+volumes:
+  elasticsearch:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge

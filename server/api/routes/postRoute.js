@@ -37,7 +37,8 @@ router.post('/', (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const posts = await Post.find();
-        res.send(posts)
+        const sortedPostsByDate = posts.sort((a, b) => b.date - a.date)
+        res.send(sortedPostsByDate)
     } catch (err) {
         res.send(err)
     }

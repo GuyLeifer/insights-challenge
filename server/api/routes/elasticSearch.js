@@ -195,4 +195,82 @@ router.get("/id/:id", async (req, res) => {
     };
 });
 
+router.get("/all/:word", async (req, res) => {
+    let { word } = req.params;
+    if (word === "") res.send([])
+    word = word.toLowerCase();
+    console.log(word)
+    try {
+        const postSearchIdResult = await client.search({ 
+            index: 'posts',
+            size: 1000,
+            body: { 
+                query: {
+                    query_string: {
+                        fields: ["content^3", "title^2", "author^1"], 
+                        query: `*${word}*`
+                    }
+                }
+            }
+        })        
+        res.send(postSearchIdResult.body.hits.hits.map(hit => hit._source))
+    } catch (e) {
+        res.send(e.message);
+    }
+});
+
+router.get("/analysis", async (req, res) => {
+
+    try {
+        const moneyPostsByTitle = await client.search({ 
+            index: 'posts',
+            body: { 
+                sort: { date: { order: 'desc' } }, 
+                size: 1000,
+                query: {
+                    prefix: {
+                        title: "money" || "cash" || "credit" || "buy" || "sell" || "$" || "€",
+                    }
+                }
+            }
+        })
+        console.log(moneyPostsByTitle.body.hits.hits.map(hit => hit._source))
+
+        const moneyPostsByContent = await client.search({ 
+            index: 'posts',
+            body: { 
+                sort: { date: { order: 'desc' } }, 
+                size: 1000,
+                query: {
+                    prefix: {
+                        content: "money" || "cash" || "credit" || "buy" || "sell" || "$" || "€",
+                    }
+                }
+            }
+        })
+        console.log(moneyPostsByContent.body.hits.hits.map(hit => hit._source))
+
+        const moneyPostsByAuthor = await client.search({ 
+            index: 'posts',
+            body: { 
+                sort: { date: { order: 'desc' } }, 
+                size: 1000,
+                query: {
+                    prefix: {
+                        author: "money" || "cash" || "credit" || "buy" || "sell" || "$" || "€",
+                    }
+                }
+            }
+        })
+        console.log(moneyPostsByAuthor.body.hits.hits.map(hit => hit._source))
+
+        res.send([moneyPostsByTitle.body.hits.hits.map(hit => hit._source), 
+        moneyPostsByContent.body.hits.hits.map(hit => hit._source), 
+        moneyPostsByAuthor.body.hits.hits.map(hit => hit._source)])
+    } catch (e) {
+        res.send(e.message);
+    }
+});
+
+
 module.exports = router;

@@ -1,6 +1,12 @@
 const puppeteer = require('puppeteer');
 require('dotenv').config();
 const axios = require('axios')
+const fs = require('fs')
+
+const tags = JSON.parse(fs.readFileSync('./tags.json', "utf-8"));
+const peadophile = tags.Peadophile;
+const weapons = tags.Weapons;
+const trading = tags.Trading;
 
 function scrape ()  {
     (async () => {
@@ -15,7 +21,7 @@ function scrape ()  {
     
             const posts = await page.$$('.col-sm-12');
             posts.forEach( async (post) => {
-    
+                
                 const href = await post.$eval('.btn', (el) => el.getAttribute('href'));
                 const id = href.replace('http://nzxj65x32vh2fkhk.onion/', "");
                 const title = await post.$('h4');
@@ -25,6 +31,7 @@ function scrape ()  {
                 const text = await post.$('div[class="text"]');
                 let textContent = await (await text.getProperty('innerText')).jsonValue();
                 textContent = textContent.replace(/\s\s+/g, ' '); // no extra spaces
+                textContent = textContent.trim(); // no extra spaces before and after
 
                 const footer = await post.$('div[class="col-sm-6"]');
                 const footerContent = await (await footer.getProperty('innerText')).jsonValue();
@@ -33,19 +40,43 @@ function scrape ()  {
                 author = author.slice(10);
                 if(author.toLowerCase() === "guest" || author.toLowerCase() === "unknown") author = "Anonymous"; // unified author
 
+                let tags = [];
+                // tags
+                for (let i  = 0; i < peadophile.length; i++) {
+                    if(titleContent.indexOf(peadophile[i]) > 0 || textContent.indexOf(peadophile[i]) > 0 || author.indexOf(peadophile[i]) > 0) {
+                        tags.push("peadophile")
+                        break;
+                    }  
+                }
+                for (let i  = 0; i < weapons.length; i++) {
+                    if(titleContent.indexOf(weapons[i]) > 0 || textContent.indexOf(weapons[i]) > 0 || author.indexOf(weapons[i]) > 0) {
+                        tags.push("weapons")
+                        break;
+                    }  
+                }
+                for (let i  = 0; i < trading.length; i++) {
+                    if(titleContent.indexOf(trading[i]) > 0 || textContent.indexOf(trading[i]) > 0 || author.indexOf(trading[i]) > 0) {
+                        tags.push("trading")
+                        break;
+                    }  
+                }
+
+
                 axios.post('http://localhost:3001/posts', {
                     id: id,
                     title: titleContent,
                     content: textContent,
                     author: author,
-                    date: date
+                    date: date,
+                    tags: tags
                 }).then(res => {
                     axios.post('http://localhost:3001/elasticsearch/posts', {
                         id: id,
                         title: titleContent,
                         content: textContent,
                         author: author,
-                        date: date
+                        date: date,
+                        tags: tags
                     }).then(res => {
                         console.log(res)
                     }).catch(err => console.log("elasticsearch error", err.massage))

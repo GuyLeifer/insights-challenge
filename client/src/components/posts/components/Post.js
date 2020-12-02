@@ -27,7 +27,15 @@ function Post({ post, increaseCounter, restore }) {
             <div className="content">{post.content}</div>
             <div className="footer">
                 <div className="info">
-                    <div className="author">Author: {post.author}</div>                
+                    <div className="author">Author: {post.author}</div>
+                    {post.tags ?
+                        <div className="tags">
+                                {post.tags.length > 0 ?
+                                    post.tags.map(tag => <span className="tag">{tag}</span>)
+                                : null} 
+                        </div>                
+                    : null 
+                    }
                     <div className="date">Date: {post.date}</div>
                 </div>
             </div>

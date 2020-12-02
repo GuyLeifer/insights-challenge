@@ -4,7 +4,7 @@ const scrape = require('./scrape');
 
 const port = process.env.PORT;
 
-app.listen(port, () => {
+app.listen(3001, () => {
     console.log(`app listening at http://localhost:${port}`)
     setInterval(function() {
         scrape()
