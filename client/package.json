@@ -11,9 +11,10 @@
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "recharts": "^1.8.5",
     "web-vitals": "^0.2.4"
   },
-  "proxy": "http://localhost:3001/",
+  "proxy": "http://insights-challenge-server:3001/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

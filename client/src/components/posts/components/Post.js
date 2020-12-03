@@ -4,6 +4,8 @@ import './Post.css';
 import { Link } from "react-router-dom";
 
 function Post({ post, increaseCounter, restore }) {
+
+    console.log(post)
     
     const [klass, setKlass] = useState('post');
     

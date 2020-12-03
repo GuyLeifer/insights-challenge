@@ -41,10 +41,26 @@ h2 {
     color: lightslategray;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .info div {
     margin: auto 1%;
 }
 .content {
     overflow-wrap: break-word;
+}
+.author {
+    width: 33%;
+    text-align: left;
+}
+.tags {
+    width: 33%;
+    color: aliceblue;
+}
+.tag {
+    margin: auto 5%;
+}
+.date {
+    width: 33%;
+    text-align: right;
 }

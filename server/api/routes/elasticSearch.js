@@ -4,7 +4,7 @@ const router = Router();
 const Post = require('../models/mongoSchema');
 
 const { Client } = require('@elastic/elasticsearch')
-const client = new Client({ node: 'http://localhost:9200' })
+const client = new Client({ node: 'http://elasticsearch:9200' })
 
 
 const updateElasticData = async (index, dataArray) => {
@@ -63,7 +63,7 @@ async function existsIndex(ind) {
     return await client.indices.exists({index: ind}).then(res => res.body)
 }
 router.post('/posts', async (req, res) => {
-    const { id, title, content, author, date } = req.body;
+    const { id, title, content, author, date, tags } = req.body;
     if(await existsIndex("posts")) {
         const postsSearchIdResults = await client.search({ 
             index: 'posts',
@@ -76,7 +76,6 @@ router.post('/posts', async (req, res) => {
             }
         })
         const postIdList = postsSearchIdResults.body.hits.hits;
-        console.log(postIdList)
         if (postIdList.length > 0) {
             res.status(301).send("post already in elastic data")
         } 
@@ -89,12 +88,13 @@ router.post('/posts', async (req, res) => {
                         title: title,
                         content: content,
                         author: author, 
-                        date: date
+                        date: date,
+                        tags: tags
                     }
                 })
                 res.send(post)
             } catch (err) {
-                res.send(err.massage)
+                res.send(err.message)
             }
         }
     } else {
@@ -111,7 +111,8 @@ router.post('/posts', async (req, res) => {
                     title: title,
                     content: content,
                     author: author, 
-                    date: date
+                    date: date,
+                    tags: tags
                 }
             })
             res.send(post)
@@ -170,6 +171,20 @@ router.get("/all", async (req, res) => {
             res.send(e.message);
         }
     };
+});
+router.get("/posts/all", async (req, res) => {
+
+    try {
+        const posts = await client.search({ 
+            index: 'posts',
+            type: '_doc',
+            size: 10000
+        })
+        
+        res.send(posts.body.hits.hits.map(hit => hit._source))
+    } catch (e) {
+        res.send(e.message);
+    }
 });
 
 router.get("/id/:id", async (req, res) => {
@@ -234,7 +249,6 @@ router.get("/analysis", async (req, res) => {
                 }
             }
         })
-        console.log(moneyPostsByTitle.body.hits.hits.map(hit => hit._source))
 
         const moneyPostsByContent = await client.search({ 
             index: 'posts',
@@ -248,7 +262,6 @@ router.get("/analysis", async (req, res) => {
                 }
             }
         })
-        console.log(moneyPostsByContent.body.hits.hits.map(hit => hit._source))
 
         const moneyPostsByAuthor = await client.search({ 
             index: 'posts',
@@ -257,16 +270,26 @@ router.get("/analysis", async (req, res) => {
                 size: 1000,
                 query: {
                     prefix: {
-                        author: "money" || "cash" || "credit" || "buy" || "sell" || "$" || "€",
+                        author: "money" || "cash" || "credit" || "buy" || "sell" || "bitcoin" || "bitcoins"|| "$" || "€",
                     }
                 }
             }
         })
-        console.log(moneyPostsByAuthor.body.hits.hits.map(hit => hit._source))
 
-        res.send([moneyPostsByTitle.body.hits.hits.map(hit => hit._source), 
-        moneyPostsByContent.body.hits.hits.map(hit => hit._source), 
-        moneyPostsByAuthor.body.hits.hits.map(hit => hit._source)])
+        const moneyPosts = [
+            moneyPostsByTitle.body.hits.hits.map(hit => hit._source), 
+            moneyPostsByContent.body.hits.hits.map(hit => hit._source), 
+            moneyPostsByAuthor.body.hits.hits.map(hit => hit._source)
+        ].map(arr => {
+            arr.map(item => {
+                item.id 
+            })
+        })
+        res.send([
+            moneyPostsByTitle.body.hits.hits.map(hit => hit._source), 
+            moneyPostsByContent.body.hits.hits.map(hit => hit._source), 
+            moneyPostsByAuthor.body.hits.hits.map(hit => hit._source)
+        ])
     } catch (e) {
         res.send(e.message);
     }

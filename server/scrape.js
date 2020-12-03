@@ -10,14 +10,21 @@ const trading = tags.Trading;
 
 function scrape ()  {
     (async () => {
-        try {
+            console.log("until here 1")
             const browser = await puppeteer.launch({
-                args: ['--proxy-server=socks5://127.0.0.1:9050'], //dark web
+                args: [
+                    '--proxy-server=socks5://tor-proxy:9050',
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage'
+                ], //dark web + docker
                 // headless: false
             })
+            console.log("until here 2")
             const page = await browser.newPage();
             await page.goto('http://nzxj65x32vh2fkhk.onion/all'); //dark web
             // await page.goto('https://paste.scratchbook.ch/lists');
+            console.log("until here 3")
     
             const posts = await page.$$('.col-sm-12');
             posts.forEach( async (post) => {
@@ -61,34 +68,38 @@ function scrape ()  {
                     }  
                 }
 
-
-                axios.post('http://localhost:3001/posts', {
+                try {
+                axios.post('http://localhost:3001/post', {
                     id: id,
                     title: titleContent,
                     content: textContent,
                     author: author,
                     date: date,
                     tags: tags
-                }).then(res => {
-                    axios.post('http://localhost:3001/elasticsearch/posts', {
-                        id: id,
-                        title: titleContent,
-                        content: textContent,
-                        author: author,
-                        date: date,
-                        tags: tags
-                    }).then(res => {
-                        console.log(res)
-                    }).catch(err => console.log("elasticsearch error", err.massage))
-                }).catch(error => {
-                    console.error(error)
+                }).then(res => console.log("until here 5"))
+                .catch(error => {
+                    console.log("mongo error", error.message)
                 })
+                } catch (err) {
+                    console.log(err.message)
+                }
+
+                try {
+                    axios.post('http://localhost:3001/elasticsearch/posts', {
+                            id: id,
+                            title: titleContent,
+                            content: textContent,
+                            author: author,
+                            date: date,
+                            tags: tags
+                    }).then(res => console.log("until here 6"))
+                    .catch(err => console.log("elasticsearch error", err.message))
+                } catch (err) {
+                    console.log(err.message)
+                }
 
                 await browser.close();
             })
-        } catch (err) {
-            console.log(err.massage)
-        }
     })()
 }
 

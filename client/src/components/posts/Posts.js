@@ -14,7 +14,7 @@ function Posts() {
 
     useEffect(() => {
         (async () => {
-            const { data } = await axios.get('/posts');
+            const { data } = await axios.get('/post');
             setPosts(data)
             setCounter(data.length)
             setInitialCounter(data.length)
