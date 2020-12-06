@@ -61,7 +61,7 @@ function Dashboard() {
         })
     }
 
-    console.log(tagsChartData)
+    
 
     return (
         <div className="dashboard">

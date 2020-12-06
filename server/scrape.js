@@ -20,11 +20,12 @@ function scrape ()  {
                 ], //dark web + docker
                 // headless: false
             })
-            console.log("until here 2")
+            console.log("until here 2 - puppeteer is working")
             const page = await browser.newPage();
-            await page.goto('http://nzxj65x32vh2fkhk.onion/all'); //dark web
-            // await page.goto('https://paste.scratchbook.ch/lists');
-            console.log("until here 3")
+            await page.goto('http://nzxj65x32vh2fkhk.onion/all', {
+                waitUntil: 'load',
+            });                                                          //dark web
+            console.log("until here 3 - dark web working")
     
             const posts = await page.$$('.col-sm-12');
             posts.forEach( async (post) => {
@@ -68,6 +69,8 @@ function scrape ()  {
                     }  
                 }
 
+                console.log("until here 4 - data pull is working")
+    
                 try {
                 axios.post('http://localhost:3001/post', {
                     id: id,
@@ -76,7 +79,7 @@ function scrape ()  {
                     author: author,
                     date: date,
                     tags: tags
-                }).then(res => console.log("until here 5"))
+                }).then(res => console.log("until here 5 - mongo is working"))
                 .catch(error => {
                     console.log("mongo error", error.message)
                 })
@@ -92,7 +95,7 @@ function scrape ()  {
                             author: author,
                             date: date,
                             tags: tags
-                    }).then(res => console.log("until here 6"))
+                    }).then(res => console.log("until here 6 - elastic is working"))
                     .catch(err => console.log("elasticsearch error", err.message))
                 } catch (err) {
                     console.log(err.message)
