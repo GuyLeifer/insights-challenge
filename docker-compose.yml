@@ -1,0 +1,88 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  tor-proxy:
+    image: dperson/torproxy
+    container_name: tor-proxy
+    hostname: tor
+    restart: unless-stopped
+    ports:
+      - '9050:9050'
+      - "8118:8118"
+    networks:
+      frontapp_a:
+        ipv4_address: 172.22.0.11
+      
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    container_name: elasticsearch
+    hostname: elasticsearch
+    ports:
+      - 9500:9200
+      - 9300:9300 
+    environment:
+      ES_JAVA_OPTS: '-Xms256m -Xmx256m'
+      network.bind_host: 0.0.0.0
+      network.host: 0.0.0.0
+      discovery.type: single-node
+    networks:
+      frontapp_a:
+        ipv4_address: 172.22.0.15
+    
+
+## server image
+  api-insights-project:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: insights-challenge-server
+    stdin_open: true
+    volumes:
+      - ./server:/usr/app/server
+      # - '/usr/app/server/node_modules'
+    ports:
+      - '3001:3001'
+    command: sh -c '/usr/app/server/wait_for_it.sh elasticsearch:9200 && npm run start'
+    environment:
+      MONGODB: mongodb+srv://guyleifer:Guyleifer7@cyber4s.k6ybr.mongodb.net/insights?retryWrites=true&w=majority
+      PORT: 3001
+    depends_on:
+      - elasticsearch
+      - tor-proxy 
+    networks:
+      frontapp_a:
+        ipv4_address: 172.22.0.13
+
+
+## client image
+  # app-insights-project:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   container_name: insights-challenge-client
+  #   stdin_open: true
+  #   volumes:
+  #     - ./client:/usr/app/client
+  #   ports:
+  #     - '3030:3000'
+  #   depends_on:
+  #     - api-insights-project ## server image
+  #   networks:
+  #     frontapp_a:
+  #       ipv4_address: 172.22.0.14
+
+volumes:
+  elasticsearch:
+    driver: local
+
+networks:
+  frontapp_a:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+
+  # elastic:
+  #   driver: bridge

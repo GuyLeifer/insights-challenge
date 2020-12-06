@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router();
+
 const mongoose = require('mongoose');
 const Post = require('../models/mongoSchema');
 
@@ -19,7 +20,8 @@ router.post('/', (req, res) => {
             title: req.body.title,
             content: req.body.content,
             author: req.body.author,
-            date: req.body.date
+            date: req.body.date,
+            tags: req.body.tags
         })
         post.save()
             .then(result => console.log(result))
@@ -33,7 +35,8 @@ router.post('/', (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const posts = await Post.find();
-        res.send(posts)
+        const sortedPostsByDate = posts.sort((a, b) => b.date - a.date)
+        res.send(sortedPostsByDate)
     } catch (err) {
         res.send(err)
     }
